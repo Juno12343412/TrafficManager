@@ -7,10 +7,11 @@ namespace TM.Manager.Game
     {
         public static GameManager _instance = null; 
 
+
         [Serializable]
         public class Setting
         {
-            
+            public int globalScore = 0;
         }
         public Setting _setting = new Setting();
 
