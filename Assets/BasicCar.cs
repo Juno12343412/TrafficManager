@@ -5,13 +5,13 @@ using TM.Manager.Game;
 
 public class BasicCar : CarBase
 {
+    public Sprite[] img;
     private void Awake()
     {
-        base.Setting();
+        base.Setting(img);
     }
     void Start()
     {
-
     }
 
     void Update()
@@ -41,8 +41,11 @@ public class BasicCar : CarBase
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("asdf");
         if (collision.gameObject.CompareTag("Car"))
         {
+            Debug.Log("asdf22");
+
             Dead();
         }
     }
