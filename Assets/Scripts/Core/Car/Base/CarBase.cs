@@ -6,36 +6,51 @@ using TM.Manager.Game;
 
 public class CarBase : MonoBehaviour
 {
+    public CarKind kind = CarKind.NONE;
+    public DirectionKind direction = DirectionKind.NONE;
+
     public float speed;
     public float score;
+
     public bool isStop = false;
+    public bool isGoldStop = false;
+
     protected bool isDead = false;
+
     public bool horizontal = false;
     public bool reverse = false;
-    Vector3 moveDir;
+    public Vector3 moveDir;
 
     protected void Setting(Sprite[] img)
     {
         if (transform.position.x < -7.5)
         {
+            direction = DirectionKind.Right;
+
             moveDir = Vector3.right;
             GetComponent<Animator>().SetInteger("MoveDir", 1);
             GetComponent<SpriteRenderer>().sprite = img[1];
         }
         else if (transform.position.x > 7.5)
         {
+            direction = DirectionKind.Left;
+
             moveDir = Vector3.left;
             GetComponent<Animator>().SetInteger("MoveDir", 0);
             GetComponent<SpriteRenderer>().sprite = img[0];
         }
         else if (transform.position.y > 4)
         {
+            direction = DirectionKind.Down;
+
             moveDir = Vector3.down;
             GetComponent<Animator>().SetInteger("MoveDir", 3);
             GetComponent<SpriteRenderer>().sprite = img[3];
         }
         else if (transform.position.y < -4)
         {
+            direction = DirectionKind.Up;
+
             moveDir = Vector3.up;
             GetComponent<Animator>().SetInteger("MoveDir", 2);
             GetComponent<SpriteRenderer>().sprite = img[2];
@@ -46,8 +61,6 @@ public class CarBase : MonoBehaviour
         GetComponent<Rigidbody2D>().gravityScale = 0;
 
     }
-
-    
 
     protected void Cycle()
     {
@@ -80,7 +93,6 @@ public class CarBase : MonoBehaviour
         transform.Translate(moveDir * speed * Time.deltaTime);
     }
 
-
     protected virtual void Dead() // 자동차 충돌 시
     {
         isDead = true;
@@ -91,7 +103,6 @@ public class CarBase : MonoBehaviour
 
     protected virtual void Pass() // 자동차 아무 이상없이 통과 시 
     {
-        
         Destroy(gameObject);
     }
 
@@ -102,6 +113,15 @@ public class CarBase : MonoBehaviour
             isStop = !isStop;
             GetComponent<Animator>().SetBool("isStop", isStop);
         }
+    }
+
+    public void GoldStop(bool state)
+    {
+        if ((!state && !isGoldStop) || (state && isStop))
+            return;
+
+        isGoldStop = isStop = state;
+        GetComponent<Animator>().SetBool("isStop", state);
     }
 
     IEnumerator CR_Accident()

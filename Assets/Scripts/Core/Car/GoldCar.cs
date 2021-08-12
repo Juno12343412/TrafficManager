@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using TM.Manager.Game;
 
-public class BasicCar : CarBase
+public class GoldCar : CarBase
 {
     public Sprite[] img;
+    
     private void Awake()
     {
         base.Setting(img);
     }
+
     void Start()
     {
     }
@@ -41,11 +43,8 @@ public class BasicCar : CarBase
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("asdf");
         if (collision.gameObject.CompareTag("Car"))
         {
-            Debug.Log("asdf22");
-
             Dead();
         }
     }

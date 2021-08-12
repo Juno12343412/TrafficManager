@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Car
   - Mouse
+  - Gold
   layers:
   - Default
   - TransparentFX
