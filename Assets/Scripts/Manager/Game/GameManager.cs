@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TM.Manager.Game
@@ -75,6 +76,7 @@ namespace TM.Manager.Game
 
         [Header("UI")]
         public GameObject[] uiObjs = null;
+        public GameObject scoreUi = null;
 
         public GameObject newsObj = null;
 
@@ -82,23 +84,33 @@ namespace TM.Manager.Game
         public GameObject[] carObjs = null;
         public Transform carParent = null;
 
+        [Header("Cam")]
+        public GameObject originCam = null;
+        public GameObject accidentCam = null;
+
+        private List<Vector3> accPosList = new List<Vector3>();
+
         [Serializable]
         public class Setting
         {
-            public int globalScore = 0;
+            public int      globalScore = 0;
 
-            public float playTime = 0f;
-            public bool isGame = false;
-            public bool isPause = false;
+            public float    playTime = 0f;
+            public bool     isGame = false;
+            public bool     isPause = false;
 
-            public int   newsCount = 0;
-            public float newsSpawnTime = 5f;
-            public float newsMaxSpawnTime = 2f;
-            public bool  isNews = false;
-            public bool  isSpecialNews = false;
+            public int      newsCount = 0;
+            public float    newsSpawnTime = 5f;
+            public float    newsMaxSpawnTime = 2f;
+            public bool     isNews = false;
+            public bool     isSpecialNews = false;
 
-            public float carSpawnTime = 4f;
-            public float carMaxSpawnTime = 1.5f;
+            public float    carSpawnTime = 4f;
+            public float    carMaxSpawnTime = 1.5f;
+
+            public bool     isAccident = false;
+            public bool     isRestart = false;
+            public bool     isOver = false;
         }
         public Setting _setting = new Setting();
 
@@ -110,17 +122,81 @@ namespace TM.Manager.Game
         void Init()
         {
             #region Singleton
-            if (_instance == null) {
+            if (_instance == null)
+            {
 
                 _instance = this;
                 DontDestroyOnLoad(this);
-            
-            } else {
+
+            }
+            else
+            {
 
                 if (_instance != this)
                     Destroy(this);
             }
             #endregion
+        }
+
+        private void Update()
+        {
+            if(_setting.isOver)
+            {
+                if(_setting.isRestart)
+                {
+                    ResetGame();
+                }
+                if (Input.GetMouseButtonDown(0))
+                {
+                    _setting.isRestart = true;
+                }
+            }
+        }
+
+        public void GetAccident()
+        {
+            originCam.SetActive(false);
+        }
+
+        public void ResetGame()
+        {
+            StopCoroutine("GameTimer");
+            StopCoroutine("CarCycle");
+            StopCoroutine("CarTimer");
+            StopCoroutine("NewsCycle");
+            StopCoroutine("NewsTimer");
+            StopCoroutine("WaitSpawn");
+            originCam.SetActive(true);
+            _setting.isAccident = true;
+            accPosList.Clear();
+            _setting.isRestart = false;
+            _setting.isOver = false;
+            _setting.globalScore = 0;
+            _setting.playTime = 0f;
+            _setting.isGame = false;
+            _setting.isPause = false;
+            _setting.newsCount = 0;
+            _setting.newsSpawnTime = 5f;
+            _setting.newsMaxSpawnTime = 2f;
+            _setting.isNews = false;
+            _setting.isSpecialNews = false;
+            _setting.carSpawnTime = 4f;
+            _setting.carMaxSpawnTime = 1.5f;
+            StartCycle();
+        }
+
+
+        public void SetAccidentPos(Vector3 position)
+        {
+            accPosList.Add(position);
+            if (accPosList.Count == 2 && !_setting.isAccident)
+            {
+                _setting.isAccident = true;
+                Vector3 posTemp = accPosList[0] + accPosList[1];
+                accPosList.Clear();
+                posTemp *= 0.5f;
+                accidentCam.transform.position = new Vector3(posTemp.x, posTemp.y, accidentCam.transform.position.z);
+            }
         }
 
         public void StartCycle()
@@ -157,9 +233,8 @@ namespace TM.Manager.Game
             {
                 yield return new WaitForSeconds(_setting.carSpawnTime);
 
-                if (!_setting.isSpecialNews)
+                if (!_setting.isSpecialNews && _setting.isGame)
                 {
-                    print("소환");
                     SpawnCar(CarKind.Basic, (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
                 }
             }
@@ -194,19 +269,16 @@ namespace TM.Manager.Game
                     // 처음 / 60초 
                     if (_setting.playTime < 60f)
                     {
-                        print("소환1");
                         SpawnCar(CarKind.Truck, (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
                     }
                     // 60초
                     else if (_setting.playTime >= 60f && _setting.playTime < 150f)
                     {
-                        print("소환2");
                         SpawnCar((CarKind)UnityEngine.Random.Range((int)CarKind.Truck, (int)CarKind.Gold), (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
                     }
                     // 150초
                     else if (_setting.playTime >= 150f)
                     {
-                        print("소환3");
                         SpawnCar((CarKind)UnityEngine.Random.Range((int)CarKind.Truck, (int)CarKind.Police), (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
                     }
                 }
@@ -236,12 +308,12 @@ namespace TM.Manager.Game
             {
                 case DirectionKind.Left:
                 case DirectionKind.Left2:
-                    v = new Vector3(8f, -0.75f, 0f);
+                    v = new Vector3(8f, -0.37f, 0f);
                     break;
 
                 case DirectionKind.Right:
                 case DirectionKind.Right2:
-                    v = new Vector3(-8f, 0.75f, 0f);
+                    v = new Vector3(-8f, 0.54f, 0f);
                     break;
 
                 case DirectionKind.Up:
