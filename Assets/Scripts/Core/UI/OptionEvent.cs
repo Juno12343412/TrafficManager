@@ -1,9 +1,12 @@
 ﻿using TM.Manager.UI;
 using TM.Manager.Game;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OptionEvent : ActionButton
 {
+    public GameObject optionObj = null;
+
     public override void OnClick()
     {
         Time.timeScale = 0f;
@@ -13,7 +16,6 @@ public class OptionEvent : ActionButton
     public void EndOption()
     {
         Time.timeScale = 1f;
-        GameManager._instance.ClearUI();
-        GameManager._instance.ShowPopUp(UIKind.Game);
+        optionObj.SetActive(false);
     }
 }

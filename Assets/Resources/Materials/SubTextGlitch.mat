@@ -42,7 +42,7 @@ Material:
     - _ColorProbability: 0.01
     - _DispGlitchOn: 1
     - _DispIntensity: 0.045
-    - _DispProbability: 0.15
+    - _DispProbability: 1.83
     - _EnableExternalAlpha: 0
     - _GlitchInterval: 0.16
     - _WrapDispCoords: 1

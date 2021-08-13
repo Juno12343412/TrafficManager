@@ -31,6 +31,7 @@ public class BasicCar : CarBase
 
     protected override void Pass()
     {
+        GameManager._instance._setting.globalScore += 10;
         base.Pass();
     }
 

@@ -66,6 +66,7 @@ public class CrazyCar : CarBase
         else if (moveDir == Vector3.down)
             d = DirectionKind.Down;
 
-        GameManager._instance.SpawnCar(CarKind.Police, d);
+        if (GameManager._instance._setting.playTime > 100f)
+            GameManager._instance.SpawnCar(CarKind.Police, d);
     }
 }

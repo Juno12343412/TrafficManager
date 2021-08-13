@@ -20,6 +20,6 @@ public class ScoreEvent : MonoBehaviour
 
     private void LateUpdate()
     {
-        _scoreText.text = "SCORE " + ((int)_fakeScore).ToString();
+        _scoreText.text = ((int)_fakeScore).ToString();
     }
 }

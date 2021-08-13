@@ -33,6 +33,7 @@ public class TankCar : CarBase
 
     protected override void Pass()
     {
+        GameManager._instance._setting.globalScore += 20;
         base.Pass();
     }
 
