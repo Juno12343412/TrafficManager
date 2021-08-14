@@ -59,11 +59,7 @@ public class CarBase : MonoBehaviour
             GetComponent<Animator>().SetInteger("MoveDir", 2);
             GetComponent<SpriteRenderer>().sprite = img[2];
         }
-        gameObject.AddComponent<BoxCollider2D>();
-        GetComponent<BoxCollider2D>().isTrigger = true;
         BoxCollider2D temp = gameObject.AddComponent<BoxCollider2D>();
-        //temp.isTrigger = true;
-        temp.size = new Vector2(temp.size.x * 0.6f, temp.size.y * 0.6f);
         gameObject.AddComponent<Rigidbody2D>();
         GetComponent<Rigidbody2D>().gravityScale = 0;
         //GetComponent<Rigidbody2D>().mass = 1;
