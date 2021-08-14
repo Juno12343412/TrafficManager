@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
+using TM.Manager.Sound;
 using TM.Manager.Game;
 
 public class CarBase : MonoBehaviour
@@ -21,6 +23,7 @@ public class CarBase : MonoBehaviour
     public bool reverse = false;
     public Vector3 moveDir;
     public bool isAccidented = false;
+
 
     protected void Setting(Sprite[] img)
     {
@@ -61,7 +64,24 @@ public class CarBase : MonoBehaviour
         gameObject.AddComponent<Rigidbody2D>();
         GetComponent<Rigidbody2D>().gravityScale = 0;
         //GetComponent<Rigidbody2D>().mass = 1;
-
+        switch (kind)
+        {
+            case CarKind.Basic:
+                SoundPlayer.instance.PlaySound("Normal_Car");
+                break;
+            case CarKind.Crazy:
+                SoundPlayer.instance.PlaySound("Auto_Car");
+                break;
+            case CarKind.Gold:
+                SoundPlayer.instance.PlaySound("Rich_Car");
+                break;
+            case CarKind.Truck:
+                SoundPlayer.instance.PlaySound("Truck_Car");
+                break;
+            case CarKind.Police:
+                SoundPlayer.instance.PlaySound("Police_Car");
+                break;
+        }
     }
 
     protected void Cycle()
@@ -88,13 +108,10 @@ public class CarBase : MonoBehaviour
                 Clicked();
             }
         }
-        if (!isStop && !GameManager._instance._setting.isAccident)
+        if (!isStop)
         {
             Move();
         }
-        if (isAccidented)
-            transform.Translate(moveDir * speed * Time.deltaTime);
-        
 
     }
 
@@ -116,15 +133,46 @@ public class CarBase : MonoBehaviour
 
     protected virtual void Pass() // 자동차 아무 이상없이 통과 시 
     {
+        SoundPlayer.instance.PlaySound("Score");
+
         Destroy(gameObject);
     }
 
     protected virtual void Clicked() // 자동차 클릭 체크 함수
     {
+        SoundPlayer.instance.StopSFX();
+
         if (!isDead)
         {
+            SoundPlayer.instance.PlaySound("Click");
             isStop = !isStop;
             GetComponent<Animator>().SetBool("isStop", isStop);
+            if (isStop)
+            {
+                SoundPlayer.instance.PlaySound("CarBreak");
+            }
+            else
+            {
+                switch (kind)
+                {
+                    case CarKind.Basic:
+                        SoundPlayer.instance.PlaySound("Normal_Car");
+                        break;
+                    case CarKind.Crazy:
+                        SoundPlayer.instance.PlaySound("Auto_Car");
+                        break;
+                    case CarKind.Gold:
+                        SoundPlayer.instance.PlaySound("Rich_Car");
+                        break;
+                    case CarKind.Truck:
+                        SoundPlayer.instance.PlaySound("Truck_Car");
+                        break;
+                    case CarKind.Police:
+                        SoundPlayer.instance.PlaySound("Police_Car");
+                        break;
+                }
+
+            }
         }
     }
 
@@ -139,6 +187,8 @@ public class CarBase : MonoBehaviour
 
     IEnumerator CR_Accident()
     {
+        SoundPlayer.instance.PlaySound("Gameover");
+
         isAccidented = true;
         speed = speed * 0.3f;
         float leftSpeed = speed;
@@ -147,14 +197,21 @@ public class CarBase : MonoBehaviour
             speed -= leftSpeed / 10;
             yield return new WaitForSeconds(0.1f);
         }
-        GameManager._instance.SetAccidentPos(transform.position);
-        GameManager._instance.GetAccident();
         speed = 0;
         isStop = true;
-        GameManager._instance.ShowPopUp(UIKind.Over);
-        GameManager._instance._setting.isOver = true;
-
+        if (!GameManager._instance._setting.isAccident)
+        {
+            GameManager._instance.SetAccidentPos(transform.position);
+            GameManager._instance.GetAccident();
+            Invoke("ShowOver", 1.5f);
+            GameManager._instance._setting.isOver = true;
+        }
     }
 
-   
+    void ShowOver()
+    {
+        SoundPlayer.instance.PlaySound("Gameover_Popup");
+        GameManager._instance.ShowPopUp(UIKind.Over);
+
+    }
 }

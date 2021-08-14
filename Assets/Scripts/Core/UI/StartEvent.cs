@@ -11,12 +11,15 @@ public class StartEvent : ActionButton
 
     public override void OnClick()
     {
-        _animtor.SetBool("isStart", true);
-        Invoke("UIOn", 2f);
-        Invoke("WaitStart", 2f);
+        if (!GameManager._instance._setting.isGame)
+        {
+            _animtor.SetBool("isStart", true);
+            Invoke("UIOn", 2f);
+            Invoke("WaitStart", 2f);
 
-        // 뭔가 싸이클 시작하는 코드 쓰기
-        GameManager._instance.StartCycle();
+            // 뭔가 싸이클 시작하는 코드 쓰기
+            GameManager._instance.StartCycle();
+        }
     }
 
     void OnDisable()

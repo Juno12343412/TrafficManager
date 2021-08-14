@@ -1,4 +1,5 @@
 ﻿using TM.Manager.Game;
+using TM.Manager.Sound;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
@@ -135,6 +136,7 @@ public class NewsEvent : MonoBehaviour
 
     IEnumerator Glitch()
     {
+        SoundPlayer.instance.PlaySound("Special_News");
         _board.GetComponent<Image>().material = _mat;
         yield return new WaitForSeconds(2f);
         _board.GetComponent<Image>().material = null;

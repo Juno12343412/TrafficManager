@@ -2,6 +2,7 @@
 using TM.Manager.Game;
 using UnityEngine;
 using UnityEngine.UI;
+using TM.Manager.Sound;
 
 public class OptionEvent : ActionButton
 {
@@ -9,6 +10,7 @@ public class OptionEvent : ActionButton
 
     public override void OnClick()
     {
+        SoundPlayer.instance.PlaySound("Popup");
         Time.timeScale = 0f;
         GameManager._instance.ShowPopUp(UIKind.Option);
     }

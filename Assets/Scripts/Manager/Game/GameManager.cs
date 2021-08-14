@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TM.Manager.Sound;
 
 namespace TM.Manager.Game
 {
@@ -33,6 +35,7 @@ namespace TM.Manager.Game
         Game,
         Over,
         Option,
+        Loading,
         NONE = 99
     }
 
@@ -77,6 +80,8 @@ namespace TM.Manager.Game
         [Header("UI")]
         public GameObject[] uiObjs = null;
         public GameObject scoreUi = null;
+        public Text gameEndScore = null;
+
 
         public GameObject newsObj = null;
 
@@ -117,6 +122,7 @@ namespace TM.Manager.Game
         void Awake()
         {
             Init();
+            SoundPlayer.instance.PlayBGM("Bgm");
         }
 
         void Init()
@@ -142,13 +148,9 @@ namespace TM.Manager.Game
         {
             if(_setting.isOver)
             {
-                if(_setting.isRestart)
-                {
-                    ResetGame();
-                }
                 if (Input.GetMouseButtonDown(0))
                 {
-                    _setting.isRestart = true;
+                    ShowPopUp(UIKind.Loading);
                 }
             }
         }
@@ -167,7 +169,7 @@ namespace TM.Manager.Game
             StopCoroutine("NewsTimer");
             StopCoroutine("WaitSpawn");
             originCam.SetActive(true);
-            _setting.isAccident = true;
+            _setting.isAccident = false;
             accPosList.Clear();
             _setting.isRestart = false;
             _setting.isOver = false;
@@ -203,9 +205,9 @@ namespace TM.Manager.Game
         {
             _setting = new Setting();
 
+            _setting.isGame = true;
             _setting.globalScore = 0;
             _setting.playTime = 0;
-            _setting.isGame = true;
 
             StartCoroutine("GameTimer");
 
@@ -308,20 +310,20 @@ namespace TM.Manager.Game
             {
                 case DirectionKind.Left:
                 case DirectionKind.Left2:
-                    v = new Vector3(8f, -0.37f, 0f);
+                    v = new Vector3(8f, -0.5f, 0f);
                     break;
 
                 case DirectionKind.Right:
                 case DirectionKind.Right2:
-                    v = new Vector3(-8f, 0.54f, 0f);
+                    v = new Vector3(-8f, 0.5f, 0f);
                     break;
 
                 case DirectionKind.Up:
-                    v = new Vector3(0.75f, 5f, 0f);
+                    v = new Vector3(0.54f, 5f, 0f);
                     break;
 
                 case DirectionKind.Down:
-                    v = new Vector3(-0.75f, -5f, 0f);
+                    v = new Vector3(-0.46f, -5f, 0f);
                     break;
 
                 case DirectionKind.NONE:
@@ -369,6 +371,8 @@ namespace TM.Manager.Game
         // UI창 띄우기
         public void ShowPopUp(UIKind kind)
         {
+            if (kind == UIKind.Over)
+                SetScore();
             uiObjs[(int)kind].SetActive(true);
         }
 
@@ -383,7 +387,10 @@ namespace TM.Manager.Game
         {
             newsObj.GetComponent<NewsEvent>().Show(kind);
         }
-
+        public void SetScore()
+        {
+            gameEndScore.text = _setting.globalScore.ToString();
+        }
         // UI 초기화
         public void ClearUI()
         {
@@ -395,7 +402,7 @@ namespace TM.Manager.Game
         IEnumerator WaitSpawn(GameObject obj, Vector3 v, float t)
         {
             yield return new WaitForSeconds(t);
-            Instantiate(obj, v, Quaternion.identity, carParent);
+            Instantiate(obj, v, Quaternion.identity, carParent).SetActive(true);
         }
     }
 }
