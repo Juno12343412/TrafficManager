@@ -12,11 +12,11 @@ public class GoldAbility : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Car"))
-        {
-            other.GetComponent<CarBase>().GoldStop(false);
-        }
-    }
+    //private void OnTriggerExit2D(Collider2D other)
+    //{
+    //    if (other.CompareTag("Car"))
+    //    {
+    //        other.GetComponent<CarBase>().GoldStop(false);
+    //    }
+    //}
 }
