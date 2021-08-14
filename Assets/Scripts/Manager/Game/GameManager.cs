@@ -325,21 +325,25 @@ namespace TM.Manager.Game
                 }
                 else if (_setting.newsCount >= 2 && !_setting.isSpecialNews && !_setting.isNews)
                 {
-                    // 처음 / 60초 
-                    if (_setting.playTime < 30f)
-                    {
-                        SpawnCar(CarKind.Truck, (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
-                    }
-                    // 60초
-                    else if (_setting.playTime >= 30f && _setting.playTime < 80f)
-                    {
-                        SpawnCar((CarKind)UnityEngine.Random.Range((int)CarKind.Truck, (int)CarKind.Gold), (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
-                    }
-                    // 150초
-                    else if (_setting.playTime >= 80f)
+                    if(_setting.playTime >= 30f)
                     {
                         SpawnCar((CarKind)UnityEngine.Random.Range((int)CarKind.Truck, (int)CarKind.Police), (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
                     }
+                    // 처음 / 60초 
+                    //if (_setting.playTime < 30f)
+                    //{
+                    //    SpawnCar(CarKind.Truck, (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
+                    //}
+                    //// 60초
+                    //else if (_setting.playTime >= 30f && _setting.playTime < 80f)
+                    //{
+                    //    SpawnCar((CarKind)UnityEngine.Random.Range((int)CarKind.Truck, (int)CarKind.Gold), (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
+                    //}
+                    //// 150초
+                    //else if (_setting.playTime >= 80f)
+                    //{
+                    //    SpawnCar((CarKind)UnityEngine.Random.Range((int)CarKind.Truck, (int)CarKind.Police), (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
+                    //}
                 }
             }
         }

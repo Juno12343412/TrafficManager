@@ -16,7 +16,7 @@ public class CrazyCar : CarBase
         // 등장 UI 띄우기
         GameManager._instance.ShowNews(NewsKind.A);
 
-        Invoke("CrazyAbility", 1f);
+        Invoke("CrazyAbility", 0.1f);
     }
 
     void Update()
@@ -59,18 +59,18 @@ public class CrazyCar : CarBase
     public void CrazyAbility()
     {
         // 경찰차 소환
-        var d = DirectionKind.NONE;
+        //var d = DirectionKind.NONE;
 
-        if (moveDir == Vector3.left)
-            d = DirectionKind.Left;
-        else if (moveDir == Vector3.right)
-            d = DirectionKind.Right;
-        else if (moveDir == Vector3.up)
-            d = DirectionKind.Up;
-        else if (moveDir == Vector3.down)
-            d = DirectionKind.Down;
+        //if (moveDir == Vector3.left)
+        //    d = DirectionKind.Left;
+        //else if (moveDir == Vector3.right)
+        //    d = DirectionKind.Right;
+        //else if (moveDir == Vector3.up)
+        //    d = DirectionKind.Up;
+        //else if (moveDir == Vector3.down)
+        //    d = DirectionKind.Down;
 
         if (GameManager._instance._setting.playTime > 50f)
-            GameManager._instance.SpawnCar(CarKind.Police, d);
+            GameManager._instance.SpawnCar(CarKind.Police, direction);
     }
 }
