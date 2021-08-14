@@ -18,7 +18,7 @@ public class NewsEvent : MonoBehaviour
         _kind = kind;
 
         PrivateShow();
-        Invoke("Hide", 4f);
+        Invoke("Hide", 8f);
     }
 
     public void Show(SNewsKind kind)
@@ -26,7 +26,7 @@ public class NewsEvent : MonoBehaviour
         _kind2 = kind;
 
         PrivateShow();
-        Invoke("Hide", 4f);
+        Invoke("Hide", 8f);
     }
 
     void PrivateShow()
@@ -35,7 +35,10 @@ public class NewsEvent : MonoBehaviour
         _text.gameObject.SetActive(true);
 
         if (_kind2 != SNewsKind.NONE)
+        {
             StartCoroutine("Glitch");
+            GameManager._instance._setting.isSpecialNews = true;
+        }
 
         switch (_kind)
         {
@@ -56,7 +59,7 @@ public class NewsEvent : MonoBehaviour
                 break;
 
             case NewsKind.E:
-                _text.text = "유럽 인공 자궁 보관소 복지 추진...최대 1000억 지원";
+                _text.text = "유럽 인공 한승우 보관소 복지 추진...최대 1000억 지원";
                 break;
 
             case NewsKind.F:
@@ -65,6 +68,14 @@ public class NewsEvent : MonoBehaviour
 
             case NewsKind.G:
                 _text.text = "여러분 우리 게임 열심히 해주세요 허허 - 기획자 올림";
+                break;
+
+            case NewsKind.H:
+                _text.text = "[긴급] 임모양 입놀리다가 결국 사형대로...";
+                break;
+
+            case NewsKind.I:
+                _text.text = "대청게임잼 이대로 가면................라이더";
                 break;
 
             case NewsKind.NONE:
@@ -127,6 +138,9 @@ public class NewsEvent : MonoBehaviour
     void Hide()
     {
         GameManager._instance._setting.isNews = false;
+
+        if (GameManager._instance._setting.isSpecialNews)
+            GameManager._instance._setting.isSpecialNews = false;
 
         _kind = NewsKind.NONE;
         _kind2 = SNewsKind.NONE;

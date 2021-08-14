@@ -39,7 +39,7 @@ Material:
     - PixelSnap: 0
     - _ColorGlitchOn: 1
     - _ColorIntensity: 0.035
-    - _ColorProbability: 0.01
+    - _ColorProbability: 0.25
     - _DispGlitchOn: 1
     - _DispIntensity: 0.045
     - _DispProbability: 1.83

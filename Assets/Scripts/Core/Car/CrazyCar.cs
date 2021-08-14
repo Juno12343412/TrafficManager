@@ -36,6 +36,10 @@ public class CrazyCar : CarBase
 
     protected override void Pass()
     {
+        GameManager._instance._setting.upScore += 20;
+        GameManager._instance._setting.globalScore += 20;
+        GameManager._instance.OnSubScore();
+
         base.Pass();
     }
 
@@ -66,7 +70,7 @@ public class CrazyCar : CarBase
         else if (moveDir == Vector3.down)
             d = DirectionKind.Down;
 
-        if (GameManager._instance._setting.playTime > 100f)
+        if (GameManager._instance._setting.playTime > 50f)
             GameManager._instance.SpawnCar(CarKind.Police, d);
     }
 }

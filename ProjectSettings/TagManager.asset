@@ -44,6 +44,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Human
+    uniqueID: 2101302013
+    locked: 0
+  - name: Car
+    uniqueID: 3127329683
+    locked: 0
+  - name: Building
+    uniqueID: 3041257359
+    locked: 0
   - name: UI
     uniqueID: 3641756345
     locked: 0

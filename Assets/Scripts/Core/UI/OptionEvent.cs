@@ -7,16 +7,33 @@ using TM.Manager.Sound;
 public class OptionEvent : ActionButton
 {
     public GameObject optionObj = null;
+    private bool isPause = false;
+
+    private void Update()
+    {
+        if(isPause)
+        {
+            if(Input.GetMouseButtonDown(0))
+            {
+                EndOption();
+            }
+        }
+    }
 
     public override void OnClick()
     {
-        SoundPlayer.instance.PlaySound("Popup");
-        Time.timeScale = 0f;
-        GameManager._instance.ShowPopUp(UIKind.Option);
+        if (!isPause)
+        {
+            isPause = true;
+            SoundPlayer.instance.PlaySound("Popup");
+            Time.timeScale = 0f;
+            GameManager._instance.ShowPopUp(UIKind.Option);
+        }
     }
 
     public void EndOption()
     {
+        isPause = false;
         Time.timeScale = 1f;
         optionObj.SetActive(false);
     }

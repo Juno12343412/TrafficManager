@@ -59,8 +59,11 @@ public class CarBase : MonoBehaviour
             GetComponent<Animator>().SetInteger("MoveDir", 2);
             GetComponent<SpriteRenderer>().sprite = img[2];
         }
-
         gameObject.AddComponent<BoxCollider2D>();
+        GetComponent<BoxCollider2D>().isTrigger = true;
+        BoxCollider2D temp = gameObject.AddComponent<BoxCollider2D>();
+        //temp.isTrigger = true;
+        temp.size = new Vector2(temp.size.x * 0.6f, temp.size.y * 0.6f);
         gameObject.AddComponent<Rigidbody2D>();
         GetComponent<Rigidbody2D>().gravityScale = 0;
         //GetComponent<Rigidbody2D>().mass = 1;
@@ -80,6 +83,21 @@ public class CarBase : MonoBehaviour
                 break;
             case CarKind.Police:
                 SoundPlayer.instance.PlaySound("Police_Car");
+                break;
+        }
+
+        switch (direction)
+        {
+            case DirectionKind.Left:
+            case DirectionKind.Left2:
+            case DirectionKind.Right:
+            case DirectionKind.Right2:
+                speed = UnityEngine.Random.Range(speed - 1.5f, speed + 1.5f);
+                break;
+
+            case DirectionKind.Up:
+            case DirectionKind.Down:
+                speed = UnityEngine.Random.Range(speed - 1.3f, speed + 1.3f);
                 break;
         }
     }
@@ -134,6 +152,20 @@ public class CarBase : MonoBehaviour
     protected virtual void Pass() // 자동차 아무 이상없이 통과 시 
     {
         SoundPlayer.instance.PlaySound("Score");
+
+        switch (kind)
+        {
+            case CarKind.Basic:
+                GameManager._instance._setting.upScore += 10;
+                break;
+            case CarKind.Gold:
+                GameManager._instance._setting.upScore += 50;
+                break;
+            case CarKind.Truck:
+                GameManager._instance._setting.upScore += 20;
+                break;
+        }
+        GameManager._instance.OnSubScore();
 
         Destroy(gameObject);
     }
@@ -201,17 +233,12 @@ public class CarBase : MonoBehaviour
         isStop = true;
         if (!GameManager._instance._setting.isAccident)
         {
+
             GameManager._instance.SetAccidentPos(transform.position);
             GameManager._instance.GetAccident();
-            Invoke("ShowOver", 1.5f);
             GameManager._instance._setting.isOver = true;
         }
     }
 
-    void ShowOver()
-    {
-        SoundPlayer.instance.PlaySound("Gameover_Popup");
-        GameManager._instance.ShowPopUp(UIKind.Over);
-
-    }
+    
 }

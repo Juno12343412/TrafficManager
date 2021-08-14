@@ -48,6 +48,8 @@ namespace TM.Manager.Game
         E,
         F,
         G,
+        H,
+        I,
         MAX,
         NONE = 99
     }
@@ -81,7 +83,7 @@ namespace TM.Manager.Game
         public GameObject[] uiObjs = null;
         public GameObject scoreUi = null;
         public Text gameEndScore = null;
-
+        public Text subScoreText = null;
 
         public GameObject newsObj = null;
 
@@ -98,24 +100,26 @@ namespace TM.Manager.Game
         [Serializable]
         public class Setting
         {
-            public int      globalScore = 0;
+            public int  globalScore = 0;
+            public int  upScore = 0;
 
-            public float    playTime = 0f;
+            public float playTime = 0f;
             public bool     isGame = false;
             public bool     isPause = false;
 
-            public int      newsCount = 0;
-            public float    newsSpawnTime = 5f;
-            public float    newsMaxSpawnTime = 2f;
-            public bool     isNews = false;
-            public bool     isSpecialNews = false;
+            public int  newsCount = 0;
+            public float newsSpawnTime = 5f;
+            public float newsMaxSpawnTime = 2f;
+            public bool isNews = false;
+            public bool isSpecialNews = false;
 
-            public float    carSpawnTime = 4f;
-            public float    carMaxSpawnTime = 1.5f;
+            public float carSpawnTime = 4f;
+            public float carMaxSpawnTime = 1.5f;
+            public bool isSpawn = false;
 
-            public bool     isAccident = false;
-            public bool     isRestart = false;
-            public bool     isOver = false;
+            public bool isAccident = false;
+            public bool isRestart = false;
+            public bool isOver = false;
         }
         public Setting _setting = new Setting();
 
@@ -146,7 +150,7 @@ namespace TM.Manager.Game
 
         private void Update()
         {
-            if(_setting.isOver)
+            if (_setting.isOver)
             {
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -174,16 +178,19 @@ namespace TM.Manager.Game
             _setting.isRestart = false;
             _setting.isOver = false;
             _setting.globalScore = 0;
+            _setting.upScore = 0;
             _setting.playTime = 0f;
             _setting.isGame = false;
             _setting.isPause = false;
             _setting.newsCount = 0;
-            _setting.newsSpawnTime = 5f;
+            _setting.newsSpawnTime = 2f;
             _setting.newsMaxSpawnTime = 2f;
             _setting.isNews = false;
             _setting.isSpecialNews = false;
+            _setting.isSpawn = false;
             _setting.carSpawnTime = 4f;
             _setting.carMaxSpawnTime = 1.5f;
+
             StartCycle();
         }
 
@@ -193,6 +200,7 @@ namespace TM.Manager.Game
             accPosList.Add(position);
             if (accPosList.Count == 2 && !_setting.isAccident)
             {
+                ShowPopUp(UIKind.Over);
                 _setting.isAccident = true;
                 Vector3 posTemp = accPosList[0] + accPosList[1];
                 accPosList.Clear();
@@ -212,6 +220,7 @@ namespace TM.Manager.Game
             StartCoroutine("GameTimer");
 
             StartCoroutine("CarCycle");
+            //StartCoroutine("CarCycle2");
             StartCoroutine("CarTimer");
 
             StartCoroutine("NewsCycle");
@@ -235,12 +244,59 @@ namespace TM.Manager.Game
             {
                 yield return new WaitForSeconds(_setting.carSpawnTime);
 
-                if (!_setting.isSpecialNews && _setting.isGame)
+                if (_setting.isGame)
                 {
-                    SpawnCar(CarKind.Basic, (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
+                    DirectionKind dk = (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max);
+                    DirectionKind dk2 = DirectionKind.NONE;
+
+                    switch (dk)
+                    {
+                        case DirectionKind.Left:
+                        case DirectionKind.Left2:
+                            dk2 = DirectionKind.Down;
+                            break;
+
+                        case DirectionKind.Right:
+                        case DirectionKind.Right2:
+                            dk2 = DirectionKind.Up;
+                            break;
+
+                        case DirectionKind.Up:
+                            dk2 = DirectionKind.Right;
+                            break;
+
+                        case DirectionKind.Down:
+                            dk2 = DirectionKind.Left;
+                            break;
+
+                        case DirectionKind.NONE:
+                        default:
+                            break;
+                    }
+
+                    SpawnCar(CarKind.Basic, dk);
+                    SpawnCar(CarKind.Basic, dk2);
+
+                    yield return new WaitForSeconds(1.8f);
+
+                    SpawnCar(CarKind.Basic, dk);
                 }
             }
         }
+
+        //public IEnumerator CarCycle2()
+        //{
+        //    while (_setting.isGame)
+        //    {
+        //        yield return new WaitForSeconds(1.8f);
+
+        //        if (!_setting.isSpecialNews && _setting.isGame)
+        //        {
+        //            DirectionKind dk = (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max);
+        //            SpawnCar(CarKind.Basic, dk);
+        //        }
+        //    }
+        //}
 
         // 자동차 스폰 시간 줄여주는 거
         public IEnumerator CarTimer()
@@ -261,25 +317,26 @@ namespace TM.Manager.Game
                 yield return new WaitForSeconds(_setting.newsSpawnTime);
 
                 // 일반 뉴스
-                if (_setting.newsCount < 3 && !_setting.isSpecialNews)
+                if (_setting.newsCount < 2 && !_setting.isSpecialNews && !_setting.isNews)
                 {
+                    print("일반뉴스");
                     ShowNews((NewsKind)UnityEngine.Random.Range((int)NewsKind.A, (int)NewsKind.MAX));
                     _setting.newsCount++;
                 }
-                else
+                else if (_setting.newsCount >= 2 && !_setting.isSpecialNews && !_setting.isNews)
                 {
                     // 처음 / 60초 
-                    if (_setting.playTime < 60f)
+                    if (_setting.playTime < 30f)
                     {
                         SpawnCar(CarKind.Truck, (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
                     }
                     // 60초
-                    else if (_setting.playTime >= 60f && _setting.playTime < 150f)
+                    else if (_setting.playTime >= 30f && _setting.playTime < 80f)
                     {
                         SpawnCar((CarKind)UnityEngine.Random.Range((int)CarKind.Truck, (int)CarKind.Gold), (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
                     }
                     // 150초
-                    else if (_setting.playTime >= 150f)
+                    else if (_setting.playTime >= 80f)
                     {
                         SpawnCar((CarKind)UnityEngine.Random.Range((int)CarKind.Truck, (int)CarKind.Police), (DirectionKind)UnityEngine.Random.Range((int)DirectionKind.Left, (int)DirectionKind.Max));
                     }
@@ -398,6 +455,19 @@ namespace TM.Manager.Game
                 obj.SetActive(false);
         }
 
+        public void OnSubScore()
+        {
+            var v = subScoreText.gameObject.transform.localPosition;
+
+            subScoreText.gameObject.transform.localPosition = v;
+            subScoreText.gameObject.GetComponent<Text>().text = _setting.upScore.ToString() + "+";
+            subScoreText.gameObject.SetActive(true);
+
+        }
+        public void ClosePopUp(UIKind _kind)
+        {
+            uiObjs[(int)_kind].SetActive(false);
+        }
         // 자동차 기다렸다가 스폰하는거
         IEnumerator WaitSpawn(GameObject obj, Vector3 v, float t)
         {

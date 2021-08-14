@@ -47,6 +47,8 @@ public class PoliceCar : CarBase
             if (collision.gameObject.GetComponent<CarBase>().kind == CarKind.Crazy)
             {
                 // 점수 오르기
+                GameManager._instance.subScoreText.gameObject.SetActive(true);
+                GameManager._instance._setting.upScore += 20;
                 GameManager._instance._setting.globalScore += 20;
 
                 Destroy(collision.gameObject);
